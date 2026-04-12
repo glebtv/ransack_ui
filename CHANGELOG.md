@@ -1,5 +1,11 @@
 # Change Log
 
+## v3.0.0
+
+### 💥 Breaking Changes
+
+* Support Ransack 4
+
 ## v2.0.1
 
 ### 🐛 Bug Fixes

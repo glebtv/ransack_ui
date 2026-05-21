@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 require 'ransack_ui/version'
 require 'ransack'
 

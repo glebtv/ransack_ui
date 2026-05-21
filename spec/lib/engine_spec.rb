@@ -10,6 +10,6 @@ RSpec.describe RansackUI::Rails::Engine do
   end
 
   it 'is a Rails::Engine' do
-    expect(RansackUI::Rails::Engine).to be < Rails::Engine
+    expect(described_class).to be < Rails::Engine
   end
 end

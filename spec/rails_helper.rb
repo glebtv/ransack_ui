@@ -14,7 +14,7 @@ RSpec.configure do |config|
 
   config.before(:suite) do
     ActiveRecord::Schema.verbose = false
-    load File.join(Rails.root, 'db', 'schema.rb')
+    load Rails.root.join('db/schema.rb').to_s
 
     intro = ('-' * 80)
     intro << "\n"

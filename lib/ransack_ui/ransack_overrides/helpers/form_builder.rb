@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 require 'ransack/helpers/form_builder'
 
 module Ransack
@@ -7,7 +9,10 @@ module Ransack
       self.cached_searchable_attributes_for_base = {}
 
       def attribute_select(options = {}, html_options = {})
-        raise ArgumentError, 'attribute_select must be called inside a search FormBuilder!' unless object.respond_to?(:context)
+        unless object.respond_to?(:context)
+          raise ArgumentError,
+                'attribute_select must be called inside a search FormBuilder!'
+        end
 
         options[:include_blank] = true unless options.key?(:include_blank)
 
@@ -30,7 +35,10 @@ module Ransack
       end
 
       def sort_select(options = {}, html_options = {})
-        raise ArgumentError, 'sort_select must be called inside a search FormBuilder!' unless object.respond_to?(:context)
+        unless object.respond_to?(:context)
+          raise ArgumentError,
+                'sort_select must be called inside a search FormBuilder!'
+        end
 
         options[:include_blank] = true unless options.key?(:include_blank)
         bases = [''] + association_array(options[:associations])
@@ -69,7 +77,7 @@ module Ransack
             condition.values.each do |value|
               # If value is present, and the attribute is an association,
               # load the selected record and include the record name as a data attribute
-              next unless value.value.present?
+              next if value.value.blank?
 
               condition_attributes = condition.attributes
               next unless condition_attributes.any?
@@ -81,7 +89,7 @@ module Ransack
 
               klass = klass_name.constantize
 
-              value_object = klass.find_by_id(value.value)
+              value_object = klass.find_by(id: value.value)
               next unless value_object
 
               labels[attribute] ||= {}
@@ -106,7 +114,10 @@ module Ransack
           else
             only = Array.wrap(only).map(&:to_s)
             # Create compounds hash, e.g. {"eq" => ["eq", "eq_any", "eq_all"], "blank" => ["blank"]}
-            key_groups = keys.inject(Hash.new([])) { |h, k| h[k.sub(/_(any|all)$/, '')] += [k]; h }
+            key_groups = keys.inject(Hash.new([])) do |h, k|
+              h[k.sub(/_(any|all)$/, '')] += [k]
+              h
+            end
             # Order compounds hash by 'only' keys
             keys = only.map { |k| key_groups[k] }.flatten.compact
           end
@@ -151,8 +162,8 @@ module Ransack
             # Try to translate options from activerecord.attribute_options.<model>.<attribute>
             inclusions = v.send(:delimiter)
             inclusions = inclusions.call if inclusions.respond_to?(:call) # handle lambda
-            hash[a.to_s] = inclusions.each_with_object({}) do |o, options|
-              options[o.to_s] = I18n.translate("activerecord.attribute_options.#{klass.to_s.downcase}.#{a}.#{o}", default: o.to_s.titleize)
+            hash[a.to_s] = inclusions.to_h do |o|
+              [o.to_s, I18n.t("activerecord.attribute_options.#{klass.to_s.downcase}.#{a}.#{o}", default: o.to_s.titleize)]
             end
           end
         end
@@ -182,12 +193,12 @@ module Ransack
           if foreign_klass
             # If field is a foreign key, set up 'data-ajax--*' attributes for auto-complete
             controller = ActiveSupport::Inflector.tableize(foreign_klass.to_s)
-            html_options[:'data-ajax--entity'] = I18n.translate(controller, default: controller)
-            if ajax_options[:url]
-              html_options[:'data-ajax--url'] = ajax_options[:url].sub(':controller', controller)
-            else
-              html_options[:'data-ajax--url'] = "/#{controller}.json"
-            end
+            html_options[:'data-ajax--entity'] = I18n.t(controller, default: controller)
+            html_options[:'data-ajax--url'] = if ajax_options[:url]
+                                                ajax_options[:url].sub(':controller', controller)
+                                              else
+                                                "/#{controller}.json"
+                                              end
             html_options[:'data-ajax--type'] = ajax_options[:type] || 'GET'
             html_options[:'data-ajax--key']  = ajax_options[:key]  || 'query'
           end
@@ -211,7 +222,7 @@ module Ransack
         self.class.cached_searchable_attributes_for_base[cache_key] ||= object.context.searchable_attributes(base).map do |column, type|
           klass = object.context.traverse(base)
           foreign_keys = klass.reflect_on_all_associations.select(&:belongs_to?)
-                              .each_with_object({}) { |r, h| h[r.foreign_key.to_sym] = r.class_name }
+                              .to_h { |r| [r.foreign_key.to_sym, r.class_name] }
 
           # Don't show 'id' column for base model
           next nil if base.blank? && column == 'id'
@@ -225,7 +236,7 @@ module Ransack
             # Check that model can autocomplete. If not, skip this id column.
             next nil unless ActiveSupport::Inflector.constantize(foreign_klass.to_s)._ransack_can_autocomplete
 
-            attribute_label = I18n.translate(foreign_klass, default: foreign_klass)
+            attribute_label = I18n.t(foreign_klass, default: foreign_klass)
           else
             foreign_klass = foreign_keys[column.to_sym]
           end

@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 module RansackUI
   module Adapters
     module ActiveRecord
@@ -21,12 +23,12 @@ module RansackUI
 
         # Return array of attributes with [name, type]
         # (Default to :string type for ransackers)
-        def ransackable_attributes(auth_object = nil)
+        def ransackable_attributes(_auth_object = nil)
           columns.map { |c| [c.name, c.type] } +
             _ransackers.keys.map { |k, v| [k, v.type || :string] }
         end
 
-        def ransackable_associations(auth_object = nil)
+        def ransackable_associations(_auth_object = nil)
           all_associations = reflect_on_all_associations.map { |a| a.name.to_s }
           if self._ransackable_associations.any?
             # Return intersection of all associations, and associations defined on the model

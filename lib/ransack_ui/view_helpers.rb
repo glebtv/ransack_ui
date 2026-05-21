@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 module RansackUI
   module ViewHelpers
     def ransack_ui_search(options = {})
@@ -11,15 +13,16 @@ module RansackUI
       end
 
       if options[:theme].to_s == 'bootstrap'
-        link_to nil, :class => 'add_fields btn btn-small btn-primary', 'data-field-type' => type, 'data-content' => "#{fields}" do
+        link_to nil, :class => 'add_fields btn btn-small btn-primary', 'data-field-type' => type,
+                     'data-content' => fields.to_s do
           "<i class=\"icon-plus icon-white\"></i><span>#{name}</span>".html_safe
         end
       else
-        link_to name, nil, :class => 'add_fields', 'data-field-type' => type, 'data-content' => "#{fields}"
+        link_to name, nil, :class => 'add_fields', 'data-field-type' => type, 'data-content' => fields.to_s
       end
     end
 
-    def link_to_remove_fields(name, f, options)
+    def link_to_remove_fields(name, _f, options)
       if options[:theme].to_s == 'bootstrap'
         link_to '<i class="icon-remove icon-white"></i>'.html_safe, nil, class: 'remove_fields btn btn-mini btn-danger'
       else

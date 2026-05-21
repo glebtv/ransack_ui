@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 require 'ransack/nodes/condition'
 
 module Ransack

@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 require 'ransack_ui/view_helpers'
 require 'ransack_ui/controller_helpers'
 

@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 # Extend original ransack adapter first
 require 'ransack/constants'
 require 'ransack/adapters/active_record/base'

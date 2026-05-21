@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 module RansackUI
   module ControllerHelpers
     # Builds @ransack_search object from params[:q]

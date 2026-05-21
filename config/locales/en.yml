@@ -21,4 +21,5 @@ en:
     group_first: "Show results where %{combinator} of the following match:"
     group_rest: "...and where %{combinator} of the following match:"
     add_condition: Add a filter
+    sort_by: "Sort by:"
     remove_condition: Remove filter

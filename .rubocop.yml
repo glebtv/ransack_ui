@@ -1,0 +1,143 @@
+plugins:
+  - rubocop-rails
+  - rubocop-rake
+  - rubocop-rspec
+
+AllCops:
+  NewCops: enable
+  TargetRubyVersion: 3.2
+  SuggestExtensions: false
+  Exclude:
+    - 'gemfiles/**/*'
+    - 'tmp/**/*'
+    - 'vendor/**/*'
+
+Gemspec/DevelopmentDependencies:
+  EnforcedStyle: Gemfile
+
+Gemspec/RequireMFA:
+  Enabled: false
+
+Layout/LineLength:
+  Max: 120
+
+Lint/UnusedMethodArgument:
+  AllowUnusedKeywordArguments: true
+
+Metrics/AbcSize:
+  Exclude:
+    - 'lib/ransack_ui/ransack_overrides/helpers/form_builder.rb'
+
+Metrics/BlockLength:
+  Exclude:
+    - 'spec/**/*'
+    - 'Rakefile'
+
+Metrics/CyclomaticComplexity:
+  Exclude:
+    - 'lib/ransack_ui/ransack_overrides/helpers/form_builder.rb'
+
+Metrics/MethodLength:
+  Max: 15
+  Exclude:
+    - 'lib/ransack_ui/ransack_overrides/helpers/form_builder.rb'
+
+Metrics/ModuleLength:
+  Exclude:
+    - 'lib/ransack_ui/ransack_overrides/helpers/form_builder.rb'
+
+Metrics/PerceivedComplexity:
+  Exclude:
+    - 'lib/ransack_ui/ransack_overrides/helpers/form_builder.rb'
+
+Naming/MethodParameterName:
+  AllowedNames:
+    - 'f'
+    - 'v'
+    - 'k'
+    - 'a'
+    - 'c'
+    - 'o'
+    - 'h'
+
+Naming/PredicatePrefix:
+  Exclude:
+    - 'lib/ransack_ui/adapters/active_record/base.rb'
+    - 'lib/ransack_ui/ransack_overrides/adapters/active_record/base.rb'
+
+Rails/ActiveSupportOnLoad:
+  Enabled: false
+
+Rails/ApplicationController:
+  Enabled: false
+
+Rails/ApplicationRecord:
+  Enabled: false
+
+Rails/HasAndBelongsToMany:
+  Enabled: false
+
+Rails/HasManyOrHasOneDependent:
+  Enabled: false
+
+Rails/OutputSafety:
+  Enabled: false
+
+RSpec/BeEq:
+  Enabled: false
+
+RSpec/DescribeClass:
+  Exclude:
+    - 'spec/lib/engine_spec.rb'
+
+RSpec/MessageSpies:
+  Enabled: false
+
+RSpec/ExampleLength:
+  Max: 15
+
+RSpec/InstanceVariable:
+  Exclude:
+    - 'spec/lib/controller_helpers_spec.rb'
+
+RSpec/MultipleExpectations:
+  Max: 3
+
+RSpec/ReceiveMessages:
+  Enabled: false
+
+RSpec/SpecFilePathFormat:
+  Exclude:
+    - 'spec/lib/ransack_ui/adapters/active_record/base_spec.rb'
+    - 'spec/lib/ransack_ui/ransack_overrides/configuration_spec.rb'
+    - 'spec/lib/ransack_ui/ransack_overrides/nodes/condition_spec.rb'
+    - 'spec/lib/ransack_ui/ransack_overrides/nodes/grouping_spec.rb'
+
+RSpec/VerifiedDoubles:
+  Exclude:
+    - 'spec/lib/view_helpers_spec.rb'
+
+Style/Documentation:
+  Enabled: false
+
+Style/EachWithObject:
+  Exclude:
+    - 'lib/ransack_ui/ransack_overrides/helpers/form_builder.rb'
+
+Style/FrozenStringLiteralComment:
+  Enabled: true
+  Exclude:
+    - 'spec/**/*'
+
+Style/HashEachMethods:
+  Exclude:
+    - 'lib/ransack_ui/ransack_overrides/helpers/form_builder.rb'
+
+Style/IfUnlessModifier:
+  Exclude:
+    - 'lib/ransack_ui/ransack_overrides/helpers/form_builder.rb'
+
+Style/RedundantSelf:
+  Exclude:
+    - 'lib/ransack_ui/adapters/active_record/base.rb'
+    - 'lib/ransack_ui/ransack_overrides/adapters/active_record/base.rb'

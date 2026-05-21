@@ -48,16 +48,18 @@ RSpec.describe RansackUI::ViewHelpers, type: :helper do
   end
 
   describe '#link_to_add_fields' do
-    it 'builds new object and generates link with data attributes' do
-      search = Article.ransack
-      builder = double('FormBuilder')
-      new_object = double('new_grouping')
+    let(:search) { Article.ransack }
+    let(:builder) { double('FormBuilder') }
+    let(:new_object) { double('new_grouping') }
 
+    it 'builds new object and generates link with data attributes' do
       allow(builder).to receive(:object).and_return(search)
       allow(search).to receive(:build_grouping).and_return(new_object)
       allow(builder).to receive(:grouping_fields).with(new_object, child_index: 'new_grouping').and_yield(builder)
       allow(helper).to receive(:render).and_return('fields html')
-      allow(helper).to receive(:link_to).and_return('<a class="add_fields" data-field-type="grouping">Add</a>'.html_safe)
+      allow(helper).to receive(:link_to).and_return(
+        '<a class="add_fields" data-field-type="grouping">Add</a>'.html_safe
+      )
 
       link = helper.link_to_add_fields('Add', builder, :grouping, {})
       expect(search).to have_received(:build_grouping)
@@ -69,20 +71,21 @@ RSpec.describe RansackUI::ViewHelpers, type: :helper do
     end
 
     it 'uses bootstrap theme classes when specified' do
-      search = Article.ransack
-      builder = double('FormBuilder')
-      new_object = double('new_grouping')
-
       allow(builder).to receive(:object).and_return(search)
       allow(search).to receive(:build_grouping).and_return(new_object)
       allow(builder).to receive(:grouping_fields).with(new_object, child_index: 'new_grouping').and_yield(builder)
       allow(helper).to receive(:render).and_return('fields html')
-      allow(helper).to receive(:link_to).and_yield.and_return('<a class="add_fields btn btn-small btn-primary">Add</a>'.html_safe)
+      allow(helper).to receive(:link_to).and_yield.and_return(
+        '<a class="add_fields btn btn-small btn-primary">Add</a>'.html_safe
+      )
 
       helper.link_to_add_fields('Add', builder, :grouping, { theme: :bootstrap })
       expect(helper).to have_received(:link_to).with(
         nil,
-        hash_including(class: 'add_fields btn btn-small btn-primary', 'data-field-type' => :grouping)
+        hash_including(
+          class: 'add_fields btn btn-small btn-primary',
+          'data-field-type' => :grouping
+        )
       )
     end
   end

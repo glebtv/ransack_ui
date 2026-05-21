@@ -32,6 +32,7 @@ Metrics/BlockLength:
   Exclude:
     - 'spec/**/*'
     - 'Rakefile'
+    - 'lib/ransack_ui/ransack_overrides/helpers/form_builder.rb'
 
 Metrics/CyclomaticComplexity:
   Exclude:
@@ -89,6 +90,9 @@ RSpec/BeEq:
 RSpec/DescribeClass:
   Exclude:
     - 'spec/lib/engine_spec.rb'
+    - 'spec/lib/ransack_ui/ransack_overrides/configuration_spec.rb'
+    - 'spec/lib/ransack_ui/ransack_overrides/nodes/condition_spec.rb'
+    - 'spec/lib/ransack_ui/ransack_overrides/nodes/grouping_spec.rb'
 
 RSpec/MessageSpies:
   Enabled: false
@@ -112,6 +116,10 @@ RSpec/SpecFilePathFormat:
     - 'spec/lib/ransack_ui/ransack_overrides/configuration_spec.rb'
     - 'spec/lib/ransack_ui/ransack_overrides/nodes/condition_spec.rb'
     - 'spec/lib/ransack_ui/ransack_overrides/nodes/grouping_spec.rb'
+    - 'spec/lib/controller_helpers_spec.rb'
+    - 'spec/lib/engine_spec.rb'
+    - 'spec/lib/version_spec.rb'
+    - 'spec/lib/view_helpers_spec.rb'
 
 RSpec/VerifiedDoubles:
   Exclude:

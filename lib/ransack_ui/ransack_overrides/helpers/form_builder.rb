@@ -45,11 +45,11 @@ module Ransack
         if bases.size > 1
           @template.select(
             @object_name, :name,
-            @template.grouped_options_for_select(attribute_collection_for_bases(bases), object.name),
-            objectify_options(options), @default_options.merge(class: 'ransack_sort').merge(html_options)
-          ) + @template.collection_select(
-            @object_name, :dir, [['asc', object.translate('asc')], ['desc', object.translate('desc')]], :first, :last,
-            objectify_options(options.except(:include_blank)), @default_options.merge(class: 'ransack_sort_order').merge(html_options)
+            @template.grouped_options_for_select(
+              attribute_collection_for_bases(bases), object.name
+            ),
+            objectify_options(options),
+            @default_options.merge(class: 'ransack_sort_order').merge(html_options)
           )
         else
           # searchable_attributes now returns [c, type]
@@ -63,8 +63,11 @@ module Ransack
             @object_name, :name, collection, :first, :last,
             objectify_options(options), @default_options.merge(class: 'ransack_sort').merge(html_options)
           ) + @template.collection_select(
-            @object_name, :dir, [['asc', object.translate('asc')], ['desc', object.translate('desc')]], :first, :last,
-            objectify_options(options.except(:include_blank)), @default_options.merge(class: 'ransack_sort_order').merge(html_options)
+            @object_name, :dir,
+            [['asc', object.translate('asc')], ['desc', object.translate('desc')]],
+            :first, :last,
+            objectify_options(options.except(:include_blank)),
+            @default_options.merge(class: 'ransack_sort_order').merge(html_options)
           )
         end
       end
@@ -114,7 +117,7 @@ module Ransack
           else
             only = Array.wrap(only).map(&:to_s)
             # Create compounds hash, e.g. {"eq" => ["eq", "eq_any", "eq_all"], "blank" => ["blank"]}
-            key_groups = keys.inject(Hash.new([])) do |h, k|
+            key_groups = keys.inject(Hash.new { |h, k| h[k] = [] }) do |h, k|
               h[k.sub(/_(any|all)$/, '')] += [k]
               h
             end
@@ -163,12 +166,22 @@ module Ransack
             inclusions = v.send(:delimiter)
             inclusions = inclusions.call if inclusions.respond_to?(:call) # handle lambda
             hash[a.to_s] = inclusions.to_h do |o|
-              [o.to_s, I18n.t("activerecord.attribute_options.#{klass.to_s.downcase}.#{a}.#{o}", default: o.to_s.titleize)]
+              [
+                o.to_s,
+                I18n.t(
+                  "activerecord.attribute_options.#{klass.to_s.downcase}.#{a}.#{o}",
+                  default: o.to_s.titleize
+                )
+              ]
             end
           end
         end
 
-        column_select_options.merge!(klass.ransack_column_select_options) if klass.respond_to?(:ransack_column_select_options)
+        if klass.respond_to?(:ransack_column_select_options)
+          column_select_options.merge!(
+            klass.ransack_column_select_options
+          )
+        end
 
         searchable_attributes_for_base(base).map do |attribute_data|
           column = attribute_data[:column]
@@ -219,37 +232,40 @@ module Ransack
         cache_prefix = object.context.klass.table_name
         cache_key = base.blank? ? cache_prefix : [cache_prefix, base].join('_')
 
-        self.class.cached_searchable_attributes_for_base[cache_key] ||= object.context.searchable_attributes(base).map do |column, type|
-          klass = object.context.traverse(base)
-          foreign_keys = klass.reflect_on_all_associations.select(&:belongs_to?)
-                              .to_h { |r| [r.foreign_key.to_sym, r.class_name] }
+        self.class.cached_searchable_attributes_for_base[cache_key] ||=
+          object.context.searchable_attributes(base).map do |column, type|
+            klass = object.context.traverse(base)
+            foreign_keys = klass.reflect_on_all_associations.select(&:belongs_to?)
+                                .to_h { |r| [r.foreign_key.to_sym, r.class_name] }
 
-          # Don't show 'id' column for base model
-          next nil if base.blank? && column == 'id'
+            # Don't show 'id' column for base model
+            next nil if base.blank? && column == 'id'
 
-          attribute = attr_from_base_and_column(base, column)
-          attribute_label = Translate.attribute(attribute, context: object.context)
+            attribute = attr_from_base_and_column(base, column)
+            attribute_label = Translate.attribute(attribute, context: object.context)
 
-          # Set model name as label for 'id' column on that model's table.
-          if column == 'id'
-            foreign_klass = object.context.traverse(base).model_name
-            # Check that model can autocomplete. If not, skip this id column.
-            next nil unless ActiveSupport::Inflector.constantize(foreign_klass.to_s)._ransack_can_autocomplete
+            # Set model name as label for 'id' column on that model's table.
+            if column == 'id'
+              foreign_klass = object.context.traverse(base).model_name
+              # Check that model can autocomplete. If not, skip this id column.
+              unless ActiveSupport::Inflector.constantize(foreign_klass.to_s)._ransack_can_autocomplete
+                next nil
+              end
 
-            attribute_label = I18n.t(foreign_klass, default: foreign_klass)
-          else
-            foreign_klass = foreign_keys[column.to_sym]
-          end
+              attribute_label = I18n.t(foreign_klass, default: foreign_klass)
+            else
+              foreign_klass = foreign_keys[column.to_sym]
+            end
 
-          attribute_data = {
-            label: attribute_label,
-            type: type,
-            column: column,
-            attribute: attribute
-          }
-          attribute_data[:foreign_klass] = foreign_klass if foreign_klass
-          attribute_data
-        end.compact
+            attribute_data = {
+              label: attribute_label,
+              type: type,
+              column: column,
+              attribute: attribute
+            }
+            attribute_data[:foreign_klass] = foreign_klass if foreign_klass
+            attribute_data
+          end.compact
       end
 
       def foreign_klass_for_attribute(attribute)

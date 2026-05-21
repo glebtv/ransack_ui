@@ -1,8 +1,12 @@
 source 'https://rubygems.org'
 
-# Include rake in Gemfile so that `bundle exec rake` doesn't raise an error
-gem 'rake', group: :test
-gem 'rubocop', '~> 0.76.0'
+gem 'ransack_ui', path: './'
 
-# Specify your gem's dependencies in ransack_ui.gemspec
-gemspec
+gem 'rake'
+gem 'sqlite3'
+gem 'combustion', '~> 1.3'
+gem 'rspec-rails', '~> 7.0'
+gem 'rails', '~> 8.0'
+gem 'rails-controller-testing'
+gem 'simplecov', require: false
+gem 'rubocop', '~> 1.50'
